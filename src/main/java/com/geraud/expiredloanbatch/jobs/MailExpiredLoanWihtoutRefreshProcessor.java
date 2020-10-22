@@ -5,10 +5,14 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Component;
 
+/**
+ * Implémentation de l'ItemProcessor pour le job
+ * Utilisation de la librairie spring SimpleMailMessage pour la création du contenu du mail de relance avec les informations tirées de la liste des prêts
+ */
 @Component
 public class MailExpiredLoanWihtoutRefreshProcessor implements ItemProcessor<Loan , SimpleMailMessage> {
     @Override
-    public SimpleMailMessage process(Loan loan) throws Exception {
+    public SimpleMailMessage process(Loan loan) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(loan.getMember().getEmail());
         mailMessage.setFrom("noreply@ocr-bibliotheque.com");
@@ -19,6 +23,6 @@ public class MailExpiredLoanWihtoutRefreshProcessor implements ItemProcessor<Loa
                 "pénalités de retard.\n\n" +
                 "A bientôt dans nos bibliothèques,\n" +
                 "L'équipe des bibliothèques d'OCR.");
-        return null;
+        return mailMessage;
     }
 }
