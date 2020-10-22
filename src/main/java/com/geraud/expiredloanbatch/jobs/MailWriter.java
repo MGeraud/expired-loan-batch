@@ -15,9 +15,10 @@ import java.util.List;
 public class MailWriter implements ItemWriter<SimpleMailMessage> {
     @Autowired
     JavaMailSender javaMailSender;
+
     @Override
     public void write(List<? extends SimpleMailMessage> list) {
-        for (SimpleMailMessage message : list){
+        for (SimpleMailMessage message : list) {
             javaMailSender.send(message);
         }
     }

@@ -1,6 +1,5 @@
 package com.geraud.expiredloanbatch.model;
 
-
 import lombok.Getter;
 import lombok.Setter;
 

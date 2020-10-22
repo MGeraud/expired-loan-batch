@@ -20,6 +20,6 @@ public class Member {
     private String cardnumber;
 
     @OneToMany(mappedBy = "member")
-    private Set<Loan> loans =new HashSet<>();
+    private Set<Loan> loans = new HashSet<>();
 
 }

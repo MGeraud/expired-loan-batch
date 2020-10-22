@@ -23,7 +23,6 @@ import java.util.List;
 public class RunJob {
     @Autowired
     LoanService loanService;
-
     @Autowired
     JobLauncher jobLauncher;
     @Autowired
@@ -33,8 +32,6 @@ public class RunJob {
     public void listExpiredLoans() throws Exception {
         List<Loan> loans = loanService.listAllLoans();
         log.info("Chargement de la liste des prêt depuis la base de donnée effectué");
-        JobExecution execution = jobLauncher.run(expiredLoanJob.sendMailToExpiredLoans(loans),new JobParametersBuilder().addString("jobID", String.valueOf(System.currentTimeMillis())).toJobParameters());
+        JobExecution execution = jobLauncher.run(expiredLoanJob.sendMailToExpiredLoans(loans), new JobParametersBuilder().addString("jobID", String.valueOf(System.currentTimeMillis())).toJobParameters());
     }
-
-
 }

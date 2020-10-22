@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface LoanDao extends JpaRepository<Loan, Long> {
-    List<Loan> findAllByBookBackDateIsNullAndRefreshEndingCounterEqualsAndStartingDateLessThan(int refresh , LocalDate avantdate);
+    List<Loan> findAllByBookBackDateIsNullAndRefreshEndingCounterEqualsAndStartingDateLessThan(int refresh, LocalDate avantdate);
 }

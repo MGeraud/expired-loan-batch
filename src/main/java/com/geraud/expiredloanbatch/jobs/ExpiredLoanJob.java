@@ -35,9 +35,9 @@ public class ExpiredLoanJob {
         this.mailWriter = mailWriter;
     }
 
-    public Job sendMailToExpiredLoans(List<Loan> loans){
+    public Job sendMailToExpiredLoans(List<Loan> loans) {
         Step step = stepBuilderFactory.get("step-send-mail")
-                .<Loan , SimpleMailMessage> chunk(100)
+                .<Loan, SimpleMailMessage>chunk(100)
                 .reader(itemReader(loans))
                 .processor(processor)
                 .writer(mailWriter)
