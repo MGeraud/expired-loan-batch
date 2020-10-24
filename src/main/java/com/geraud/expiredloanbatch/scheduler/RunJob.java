@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -30,8 +31,9 @@ public class RunJob {
 
     @Scheduled(cron = "1 * * * * *")
     public void listExpiredLoans() throws Exception {
-        List<Loan> loans = loanService.listAllLoans();
+        List<Loan> loans = loanService.listAllLoans(0 , LocalDate.now().minusWeeks(4));
+        List<Loan> loansAfterRefreshPeriod = loanService.listAllLoans(1,LocalDate.now().minusWeeks(8));
         log.info("Chargement de la liste des prêt depuis la base de donnée effectué");
-        JobExecution execution = jobLauncher.run(expiredLoanJob.sendMailToExpiredLoans(loans), new JobParametersBuilder().addString("jobID", String.valueOf(System.currentTimeMillis())).toJobParameters());
+        JobExecution execution = jobLauncher.run(expiredLoanJob.sendMailToExpiredLoans(loans, loansAfterRefreshPeriod), new JobParametersBuilder().addString("jobID", String.valueOf(System.currentTimeMillis())).toJobParameters());
     }
 }

@@ -13,10 +13,8 @@ public class LoanServiceImpl implements LoanService {
     @Autowired
     private LoanDao loanDao;
 
-    private LocalDate beforeRefresh = LocalDate.now().minusWeeks(4);
-
     @Override
-    public List<Loan> listAllLoans() {
-        return loanDao.findAllByBookBackDateIsNullAndRefreshEndingCounterEqualsAndStartingDateLessThan(0, beforeRefresh);
+    public List<Loan> listAllLoans(int refresh , LocalDate beforeDate) {
+        return loanDao.findAllByBookBackDateIsNullAndRefreshEndingCounterEqualsAndStartingDateLessThan(refresh, beforeDate);
     }
 }

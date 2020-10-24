@@ -25,25 +25,35 @@ public class ExpiredLoanJob {
     private JobBuilderFactory jobBuilderFactory;
     private StepBuilderFactory stepBuilderFactory;
     private MailExpiredLoanWihtoutRefreshProcessor processor;
+    private MailExpiredLoanAlreadyRefreshedProcessor expiredLoanAlreadyRefreshedProcessor;
     private MailWriter mailWriter;
 
     @Autowired
-    public ExpiredLoanJob(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory, MailExpiredLoanWihtoutRefreshProcessor processor, MailWriter mailWriter) {
+    public ExpiredLoanJob(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory, MailExpiredLoanWihtoutRefreshProcessor processor, MailExpiredLoanAlreadyRefreshedProcessor expiredLoanAlreadyRefreshedProcessor, MailWriter mailWriter) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
         this.processor = processor;
+        this.expiredLoanAlreadyRefreshedProcessor = expiredLoanAlreadyRefreshedProcessor;
         this.mailWriter = mailWriter;
     }
 
-    public Job sendMailToExpiredLoans(List<Loan> loans) {
+    public Job sendMailToExpiredLoans(List<Loan> loans , List<Loan> alreadyRefreshedLoans) {
         Step step = stepBuilderFactory.get("step-send-mail")
                 .<Loan, SimpleMailMessage>chunk(100)
                 .reader(itemReader(loans))
                 .processor(processor)
                 .writer(mailWriter)
                 .build();
+        Step step1 = stepBuilderFactory.get("step-send-mail-expired-period-already-refreshed")
+                .<Loan, SimpleMailMessage>chunk(100)
+                .reader(itemReader(alreadyRefreshedLoans))
+                .processor(expiredLoanAlreadyRefreshedProcessor)
+                .writer(mailWriter)
+                .build();
+
         return jobBuilderFactory.get("alert-loan-expired")
                 .flow(step)
+                .next(step1)
                 .end()
                 .build();
     }
