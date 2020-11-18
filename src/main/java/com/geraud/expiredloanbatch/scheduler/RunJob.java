@@ -9,6 +9,7 @@ import org.springframework.batch.core.*;
 
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,8 @@ import java.util.List;
 @Slf4j
 public class RunJob {
 
+    @Value("${url.base.loan}")
+    private String loanUrl;
     @Autowired
     JobLauncher jobLauncher;
     @Autowired
@@ -34,10 +37,12 @@ public class RunJob {
     @Autowired
     RestTemplate restTemplate;
 
-    @Scheduled(cron = "1 * * * * *")
+    //Pour tester en  envoyant par minute inverser décommenter la ligne suivante et commenter celle qui déclenche le batch tous les jours à 1h du matin
+    //@Scheduled(cron = "1 * * * * *")
+    @Scheduled(cron = "* 1 * * * *")
     public void listExpiredLoans() throws Exception {
         //création de l'url pour appeller l'API rest pour la liste des livres non retournés supérieure à 4 semaines sans renouvellement de période
-        String url = UriComponentsBuilder.fromHttpUrl("http://localhost:9092/batch/" )
+        String url = UriComponentsBuilder.fromHttpUrl(loanUrl)
                 .queryParam("refresh" , 0)
                 .queryParam("date" , LocalDate.now().minusWeeks(4) )
                 .toUriString();
@@ -46,7 +51,7 @@ public class RunJob {
         List<Loan> loans = Arrays.asList(responseBeforeRefresh.getBody().clone());
 
         //création de l'url pour appeller l'API rest pour la liste des livres non retournés supérieure à 8 semaines periode déja renouvellée
-        String urlresfred = UriComponentsBuilder.fromHttpUrl("http://localhost:9092/batch/" )
+        String urlresfred = UriComponentsBuilder.fromHttpUrl(loanUrl )
                 .queryParam("refresh" , 1)
                 .queryParam("date" , LocalDate.now().minusWeeks(8) )
                 .toUriString();
